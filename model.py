@@ -15,12 +15,12 @@ class Generator:
         self.vocab_size     = vocab_size
         self.embedding_size = embedding_size
         self.max_seq_length = max_seq_length
-        self.X_input  = tf.placeholder(tf.int32, [None, max_seq_length])
-        self.y_output = tf.placeholder(tf.int32, [None, max_seq_length])
+        self.X_input        = tf.placeholder(tf.int32, [None, max_seq_length])
+        self.y_output       = tf.placeholder(tf.int32, [None, max_seq_length])
         with tf.device('/cpu:0'), tf.name_scope('embeddings'):
             W_embeddings = tf.Variable(
-                initial_value=tf.random_uniform([vocab_size, embedding_size], -1.0, 1.0),
-                name='W_embedding'
+                initial_value = tf.random_uniform([vocab_size, embedding_size], -1.0, 1.0),
+                name          = 'W_embedding'
             )
             self.embeddings = tf.nn.embedding_lookup(W_embeddings, self.X_input)
         rnn = tf.contrib.rnn.LSTMBlockCell(
@@ -33,9 +33,9 @@ class Generator:
 
     def train(self, X, y, nb_epochs, batch_size=32, learning_rate=.001):
         self.W_softmax = tf.get_variable(
-            name='W_softmax',
-            shape=[batch_size, self.nb_units, self.vocab_size],
-            initializer=tf.random_normal_initializer(0, 1)
+            name        = 'W_softmax',
+            shape       = [batch_size, self.nb_units, self.vocab_size],
+            initializer = tf.random_normal_initializer(0, 1)
         )
         self.b_softmax       = tf.get_variable('b_softmax', [self.vocab_size])
         output, hidden_state = tf.nn.dynamic_rnn(self.lstm, self.embeddings, dtype=tf.float32)
